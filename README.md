@@ -5,6 +5,8 @@ API and beats communication using client certificate.
 
 ![Graylog proxy setup](documentation/graylog-proxy-setup.png)
 
+Port numbers on picture above are for default deployment scenario.
+
 The proxy container is based on alpine version of [HAProxy docker container](https://hub.docker.com/_/haproxy/).
 
 ## Usage
