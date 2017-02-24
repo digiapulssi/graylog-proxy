@@ -3,7 +3,7 @@
 Provides proxy for Graylog Sidecar that secures access to remote Graylog REST
 API and beats communication using client certificate.
 
-![Graylog proxy setup](documentation/graylog-proxy-setup.png)
+![Graylog proxy setup](https://github.com/digiapulssi/graylog-proxy/raw/master/documentation/graylog-proxy-setup.png)
 
 Port numbers on picture above are for default deployment scenario.
 
