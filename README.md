@@ -42,6 +42,7 @@ Additionally port numbers can be customized by environment variables:
 ### Creating Private Root CA and CA Signed Client Certificate
 
 1. To create root CA, execute `bin/createRootCA.sh` and fill in data. Example:
+
 ```
 [graylog-proxy]$./createRootCA.sh
 Root CA file [rootCA]:
@@ -70,6 +71,7 @@ Configure generated CA certificate as accepted CA on server side. Keep root CA
 private key (rootCA.key in example) and certificate (rootCA.pem) stored securely.
 
 2. To create client certificate, execute `bin/createClientCert.sh` and fill in data. Example:
+
 ```
 [graylog-proxy]$./createClientCert.sh
 Client certificate name [client]:
