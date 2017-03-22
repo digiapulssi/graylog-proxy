@@ -14,11 +14,15 @@ The proxy container is based on alpine version of [HAProxy docker container](htt
 The container requires PEM files for client and server certificates to establish
 secure communication to server.
 
-The server certificate PEM must contain full trust chain of certificates
+The server certificate PEM (ca.pem) must contain full trust chain of certificates
 (including root CA certificate) because proxy does not trust any root CAs by
-default.
+default. For example, if your server certificate is signed by DigiCert Issuer CA
+you will need ca.pem with:
+- Your server certificate
+- DigiCert Issuer CA which signed your server certificate
+- DigiCert Root CA which signed DigiCert Issuer CA
 
-Client certificate PEM must contain the client certificate and issuer CA
+Client certificate PEM (client.pem) must contain the client certificate and issuer CA
 certificate followed by client's private key. See below on how to create private
 CA and client certificate.
 
