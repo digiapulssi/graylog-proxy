@@ -49,3 +49,69 @@ local2.* /var/log/haproxy.log
 and restart rsyslog:
 
 `systemctl restart rsyslog.service`
+
+## Creating Private Root CA and CA Signed Client Certificate
+
+1. To create root CA, execute `bin/createRootCA.sh` and fill in data. Example:
+```
+[graylog-proxy]$./createRootCA.sh
+Root CA file [rootCA]:
+Root CA validity period in days [365]:
+Generating RSA private key, 2048 bit long modulus
+.............................+++
+....................+++
+e is 65537 (0x10001)
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:FI
+State or Province Name (full name) []:Länsi-Suomi
+Locality Name (eg, city) [Default City]:Tampere
+Organization Name (eg, company) [Default Company Ltd]:Digia Finland Oy
+Organizational Unit Name (eg, section) []:IMS
+Common Name (eg, your name or your server's hostname) []:ABC Root CA
+Email Address []:
+```
+
+Configure generated CA certificate as accepted CA on server side. Keep root CA
+private key (rootCA.key in example) and certificate (rootCA.pem) stored securely.
+
+2. To create client certificate, execute `bin/createClientCert.sh` and fill in data. Example:
+```
+[graylog-proxy]$./createClientCert.sh
+Client certificate name [client]:
+Client certificate validity period in days [365]:
+Root CA name [rootCA]:
+Generating RSA private key, 2048 bit long modulus
+....................................................+++
+....................................................................+++
+e is 65537 (0x10001)
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:FI
+State or Province Name (full name) []:Länsi-Suomi
+Locality Name (eg, city) [Default City]:Tampere
+Organization Name (eg, company) [Default Company Ltd]:Digia Finland Oy
+Organizational Unit Name (eg, section) []:IMS
+Common Name (eg, your name or your server's hostname) []:ABC Client Certificate
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+Signature ok
+subject=/C=FI/ST=L\xC3\x83\xC2\xA4nsi-Suomi/L=Tampere/O=Digia Finland Oy/OU=IMS/CN=ABC Client Certificate
+Getting CA Private Key
+```
+
+Use generated PEM file (client.pem) in example for graylog proxy. It includes both private key and CA signed certificate.
