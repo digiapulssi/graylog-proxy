@@ -12,10 +12,15 @@ The proxy container is based on alpine version of [HAProxy docker container](htt
 ## Usage
 
 The container requires PEM files for client and server certificates to establish
-secure communication to server. The server certificate PEM must contain full
-trust chain of certificates (including root CA certificate). Client certificate
-PEM must contain the client certificate and issuer CA certificate followed by
-client's private key.
+secure communication to server.
+
+The server certificate PEM must contain full trust chain of certificates
+(including root CA certificate) because proxy does not trust any root CAs by
+default.
+
+Client certificate PEM must contain the client certificate and issuer CA
+certificate followed by client's private key. See below on how to create private
+CA and client certificate.
 
 Copy the certificate PEM files for client (client.pem) and server (ca.pem) to
 docker host (suggested directory /etc/haproxy/cert) and modify their ownership
@@ -30,27 +35,7 @@ Additionally port numbers can be customized by environment variables:
 * API_SERVER_PORT - API port on server (default 8443)
 * BEATS_SERVER_PORT - beats port on server (default 5044)
 
-## Getting Logs from Proxy
-
-The proxy is configured to log to docker host's rsyslog via local2 facility.
-To configure logs enable UDP 514 port in /etc/rsyslog.conf:
-
-```
-$ModLoad imudp
-$UDPServerRun 514
-```
-
-then create configuration file /etc/rsyslog.d/haproxy.conf:
-
-```
-local2.* /var/log/haproxy.log
-```
-
-and restart rsyslog:
-
-`systemctl restart rsyslog.service`
-
-## Creating Private Root CA and CA Signed Client Certificate
+### Creating Private Root CA and CA Signed Client Certificate
 
 1. To create root CA, execute `bin/createRootCA.sh` and fill in data. Example:
 ```
@@ -114,4 +99,24 @@ subject=/C=FI/ST=L\xC3\x83\xC2\xA4nsi-Suomi/L=Tampere/O=Digia Finland Oy/OU=IMS/
 Getting CA Private Key
 ```
 
-Use generated PEM file (client.pem) in example for graylog proxy. It includes both private key and CA signed certificate.
+Use generated PEM file (client.pem in example) for graylog proxy. It includes both private key and CA signed certificate.
+
+## Getting Logs from Proxy
+
+The proxy is configured to log to docker host's rsyslog via local2 facility.
+To configure logs enable UDP 514 port in /etc/rsyslog.conf:
+
+```
+$ModLoad imudp
+$UDPServerRun 514
+```
+
+then create configuration file /etc/rsyslog.d/haproxy.conf:
+
+```
+local2.* /var/log/haproxy.log
+```
+
+and restart rsyslog:
+
+`systemctl restart rsyslog.service`
