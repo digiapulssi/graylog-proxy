@@ -23,6 +23,6 @@ openssl req -new -key ${CLIENT}.key -out ${CLIENT}.csr
 openssl x509 -req -in ${CLIENT}.csr -CA ${ROOT_CA}.pem -CAkey ${ROOT_CA}.key -CAcreateserial -out ${CLIENT}.crt -days $DAYS -sha256
 
 # Create client PEM
-cat ${CLIENT}.crt >>${CLIENT}.pem
-cat ${ROOT_CA}.pem >${CLIENT}.pem
+cat ${CLIENT}.crt >${CLIENT}.pem
+cat ${ROOT_CA}.pem >>${CLIENT}.pem
 cat ${CLIENT}.key >>${CLIENT}.pem
