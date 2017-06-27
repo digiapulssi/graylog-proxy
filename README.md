@@ -11,6 +11,8 @@ The proxy container is based on alpine version of [HAProxy docker container](htt
 
 ## Usage
 
+### Certificate Setup
+
 The container requires PEM files for client and server certificates to establish
 secure communication to server.
 
@@ -30,6 +32,8 @@ Copy the certificate PEM files for client (client.pem) and server (server_ca.pem
 docker host (suggested directory /etc/haproxy/cert) and modify their ownership
 to root and mode to 400.
 
+### Creating the Docker Container
+
 To create and start the proxy container run:
 `docker run -d --name graylog-proxy -p 8080:8080 -p 5044:5044 -v <path-to-certificates>:/usr/local/etc/haproxy/cert -e LOGGING_SERVER=<graylog-server-name> digiapulssi/graylog-proxy`
 
@@ -39,10 +43,24 @@ Additionally port numbers can be customized by environment variables:
 * API_SERVER_PORT - API port on server (default 8443)
 * BEATS_SERVER_PORT - beats port on server (default 5044)
 
+### Alternative: Container with Generated Proxy Configuration
+
+Alternatively to support different setup scenarios you can use
+interactive script in `bin/createGraylogProxy.sh` to generate proxy
+configuration file. The script should be run as root.
+
+Certificate setup instructions presented above apply when generating proxy
+configuration with TLSv12 enabled.
+
 ### Creating Private Root CA and CA Signed Client Certificate
 
-1. To create root CA, execute `bin/createRootCA.sh` and fill in data. Example:
+1. To create root CA, execute `bin/createRootCA.sh` and fill in data.
 
+NOTES:
+* Input securely generated passphrase when prompted, passphrase will not be echoed
+* Use unique descriptive values for subject information, particulary for "Common Name"
+
+Example:
 ```
 [graylog-proxy]$./createRootCA.sh
 Root CA file [rootCA]:
@@ -51,6 +69,8 @@ Generating RSA private key, 2048 bit long modulus
 .............................+++
 ....................+++
 e is 65537 (0x10001)
+Enter pass phrase for rootCA.key:
+Verifying - Enter pass phrase for rootCA.key:
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -63,15 +83,19 @@ State or Province Name (full name) []:Länsi-Suomi
 Locality Name (eg, city) [Default City]:Tampere
 Organization Name (eg, company) [Default Company Ltd]:Digia Finland Oy
 Organizational Unit Name (eg, section) []:IMS
-Common Name (eg, your name or your server's hostname) []:ABC Root CA
+Common Name (eg, your name or your server's hostname) []:Digia Pulssi Root CA
 Email Address []:
 ```
 
 Configure generated CA certificate as accepted CA on server side. Keep root CA
 private key (rootCA.key in example) and certificate (rootCA.pem) stored securely.
 
-2. To create client certificate, execute `bin/createClientCert.sh` and fill in data. Example:
+2. To create client certificate, execute `bin/createClientCert.sh` and fill in data.
 
+NOTES:
+* Use unique descriptive values for subject information, particulary for "Common Name"
+
+Example:
 ```
 [graylog-proxy]$./createClientCert.sh
 Client certificate name [client]:
@@ -93,7 +117,7 @@ State or Province Name (full name) []:Länsi-Suomi
 Locality Name (eg, city) [Default City]:Tampere
 Organization Name (eg, company) [Default Company Ltd]:Digia Finland Oy
 Organizational Unit Name (eg, section) []:IMS
-Common Name (eg, your name or your server's hostname) []:ABC Client Certificate
+Common Name (eg, your name or your server's hostname) []:Digia Pulssi Client Certificate
 Email Address []:
 
 Please enter the following 'extra' attributes
@@ -101,7 +125,7 @@ to be sent with your certificate request
 A challenge password []:
 An optional company name []:
 Signature ok
-subject=/C=FI/ST=L\xC3\x83\xC2\xA4nsi-Suomi/L=Tampere/O=Digia Finland Oy/OU=IMS/CN=ABC Client Certificate
+subject=/C=FI/ST=L\xC3\x83\xC2\xA4nsi-Suomi/L=Tampere/O=Digia Finland Oy/OU=IMS/CN=Digia Pulssi Client Certificate
 Getting CA Private Key
 ```
 
