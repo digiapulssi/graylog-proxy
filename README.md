@@ -38,7 +38,7 @@ certificate followed by client's private key. See below on how to create private
 CA and client certificate.
 
 Copy the certificate PEM files for client (client.pem) and server (server_ca.pem) to
-docker host (suggested directory /etc/haproxy/cert) and modify their ownership
+container host's /etc/haproxy/cert directory and modify their ownership
 to root and mode to 400.
 
 ### Creating Private Root CA and CA Signed Client Certificate
