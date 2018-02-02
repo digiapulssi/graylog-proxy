@@ -42,6 +42,7 @@ read -p "Use TLSv12 client certificate for connections [Y/n]: " -n1 input
 echo ""
 
 USE_TLSv12=${input:-y}
+USE_TLSv12=${USE_TLSv12,,}
 
 if [ "y" == "$USE_TLSv12" ]; then
   API_SERVER_PORT=8443
