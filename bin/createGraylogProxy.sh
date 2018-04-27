@@ -94,7 +94,7 @@ listen graylog_beats
 
 echo Creating proxy container...
 docker create \
-  --restart always \
+  --restart unless-stopped \
   --name ${CONTAINER_NAME} \
   -p ${PROXY_ADDRESS}:${BEATS_PUBLISH_PORT}:${BEATS_PUBLISH_PORT} \
   -p ${PROXY_ADDRESS}:${API_PUBLISH_PORT}:${API_PUBLISH_PORT} \
