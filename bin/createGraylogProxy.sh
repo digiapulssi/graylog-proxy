@@ -36,7 +36,7 @@ fi
 read -p "Enter bind address for graylog-proxy [${PROXY_ADDRESS}]: " input
 PROXY_ADDRESS=${input:-$PROXY_ADDRESS}
 
-read -p "Enter logging server or next proxy address: " LOGGING_SERVER
+read -p "Enter logging server or next proxy addresses (separate addresses with space): " LOGGING_SERVER
 
 read -p "Use TLSv12 client certificate for connections [Y/n]: " -n1 input
 echo ""
@@ -68,7 +68,7 @@ read -p "Enter server Beats port that graylog-proxy will connect to at ${LOGGING
 BEATS_SERVER_PORT=${input:-$BEATS_SERVER_PORT}
 
 echo Generating proxy configuration to ${CONFIG_DIR}/haproxy.cfg...
-echo """
+echo -n """
 global
     tune.ssl.default-dh-param 2048
     log 172.17.0.1 local2
@@ -84,13 +84,30 @@ defaults
 listen graylog_api
     mode tcp
     bind *:${API_PUBLISH_PORT}
-    server graylog ${LOGGING_SERVER}:${API_SERVER_PORT} ${TLS_CONFIG}
+""" >${CONFIG_DIR}/haproxy.cfg
+
+idx=1
+for server in ${LOGGING_SERVER//,/ }
+do
+  echo -n """
+    server graylog${idx} ${server}:${API_SERVER_PORT} ${TLS_CONFIG}""" >>${CONFIG_DIR}/haproxy.cfg
+  ((idx++))
+done
+
+echo -n """
 
 listen graylog_beats
     mode tcp
     bind *:${BEATS_PUBLISH_PORT}
-    server graylog ${LOGGING_SERVER}:${BEATS_SERVER_PORT} ${TLS_CONFIG}
-""" >${CONFIG_DIR}/haproxy.cfg
+""" >>${CONFIG_DIR}/haproxy.cfg
+
+idx=1
+for server in ${LOGGING_SERVER//,/ }
+do
+  echo -n """
+    server graylog${idx} ${server}:${BEATS_SERVER_PORT} ${TLS_CONFIG}""" >>${CONFIG_DIR}/haproxy.cfg
+  ((idx++))
+done
 
 echo Creating proxy container...
 docker create \
