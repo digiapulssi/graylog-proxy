@@ -36,7 +36,7 @@ fi
 read -p "Enter bind address for graylog-proxy [${PROXY_ADDRESS}]: " input
 PROXY_ADDRESS=${input:-$PROXY_ADDRESS}
 
-read -p "Enter logging server or next proxy addresses (separate addresses with space): " LOGGING_SERVER
+read -p "Enter logging server or next proxy addresses (separate addresses with comma or space): " LOGGING_SERVER
 
 read -p "Use TLSv12 client certificate for connections [Y/n]: " -n1 input
 echo ""
