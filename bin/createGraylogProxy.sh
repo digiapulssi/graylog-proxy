@@ -3,7 +3,7 @@
 set -e
 
 # Configuration directory for proxy
-CONFIG_DIR=/etc/haproxy
+CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/haproxy"
 # Docker container name
 CONTAINER_NAME=graylog-proxy
 # Docker image to use
